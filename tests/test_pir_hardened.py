@@ -11,7 +11,7 @@ import numpy as np
 from collections import deque
 import time
 from typing import List, Dict
-from pir_hardened_system import HardenedPIRSystem, HardenedIPF, integrate_hardened_pir
+from detection.pir_hardened import HardenedPIRSystem, HardenedIPF, integrate_hardened_pir
 
 # ═══════════════════════════════════════════════════════════════════════════
 
