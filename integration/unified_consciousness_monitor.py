@@ -22,14 +22,10 @@ from dataclasses import dataclass
 from enum import Enum
 
 # Import the three frameworks
-
 # (In practice these would be actual imports)
-
-# from temporal_playground_full import TemporalPlayground
-
-# from geometric_split_trio import GeometricSplitTrio
-
-# from ms_calculator import MSCalculator, SystemMetrics, TimeSeriesAnalyzer
+# from core.temporal_playground import TemporalPlayground
+# from geometry.geometric_split_trio import GeometricSplitTrio
+# MSCalculator, SystemMetrics, TimeSeriesAnalyzer are defined below as placeholders
 
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -139,6 +135,11 @@ self_field_angle_deg: float
 reality_coherence: float
 primary_divergence: Optional[str]
 
+# Confusion Detection
+confusion_detected: bool
+expected_state: Optional[str]
+observed_state: Optional[str]
+
 # System Viability Metrics
 m_s_score: float
 m_s_interpretation: str
@@ -206,6 +207,11 @@ def assess_moment(
     reality_fracture: bool = False,
     self_field_angle_deg: float = 0.0,
     
+    # Confusion detection
+    prediction_mismatch: bool = False,
+    expected_state: Optional[str] = None,
+    observed_state: Optional[str] = None,
+    
     # Context
     pattern_count: int = 5,
     manipulation_alerts: int = 0
@@ -252,8 +258,28 @@ def assess_moment(
     loss = manipulation_alerts * 0.5
     
     # ═══════════════════════════════════════════════════════════════════
-    # 2. INTEGRATE REALITY ALIGNMENT
+    # 2. INTEGRATE REALITY ALIGNMENT & CONFUSION DETECTION
     # ═══════════════════════════════════════════════════════════════════
+    
+    # Confusion: Prediction-reality mismatch detection
+    # NOT shame for being wrong (Western pathologization)
+    # BUT accurate signal that model needs updating
+    confusion_detected = prediction_mismatch
+    
+    if expected_state and observed_state:
+        # Compute mismatch if states provided
+        confusion_detected = (expected_state != observed_state)
+    
+    # Confusion increases adaptability cost initially (need to recalculate)
+    # But if handled with curiosity (not shame), leads to model improvement
+    if confusion_detected:
+        # Temporarily reduces adaptability (uncertainty about which model to use)
+        adaptability *= 0.85
+        
+        # Increases loss if met with shame/suppression
+        # But neutral if met with curiosity
+        # We assume curiosity-positive culture here
+        loss += 0.1  # Small temporary cost of model updating
     
     # If narratives provided, check alignment
     # (Simplified - in real version would call GeometricSplitTrio)
@@ -303,6 +329,13 @@ def assess_moment(
     
     warnings = []
     insights = []
+    
+    # Check for confusion (prediction mismatch)
+    if confusion_detected:
+        if expected_state and observed_state:
+            insights.append(f"🤔 Prediction mismatch: expected '{expected_state}', observed '{observed_state}' - model update opportunity")
+        else:
+            insights.append(f"🤔 Prediction mismatch detected - model updating in progress")
     
     # Check for collapse trajectory
     if time_to_collapse and time_to_collapse < self.warning_horizon:
@@ -363,6 +396,9 @@ def assess_moment(
         self_field_angle_deg=self_field_angle_deg,
         reality_coherence=reality_coherence,
         primary_divergence=primary_divergence,
+        confusion_detected=confusion_detected,
+        expected_state=expected_state,
+        observed_state=observed_state,
         m_s_score=m_s_score,
         m_s_interpretation=m_s_interpretation,
         resonance=resonance,
@@ -438,6 +474,17 @@ def print_assessment(self, assessment: UnifiedAssessment):
             print(f"   Primary axis: {assessment.primary_divergence}")
     else:
         print(f"   ✓ Aligned ({assessment.self_field_angle_deg:.1f}°)")
+    
+    # Confusion detection
+    if assessment.confusion_detected:
+        print(f"\n🤔 CONFUSION DETECTED (Prediction Mismatch):")
+        if assessment.expected_state and assessment.observed_state:
+            print(f"   Expected: {assessment.expected_state}")
+            print(f"   Observed: {assessment.observed_state}")
+            print(f"   → Model update opportunity (NOT shame for being wrong)")
+        else:
+            print(f"   Prediction-reality mismatch detected")
+            print(f"   → Invitation to curiosity and investigation")
     
     # Warnings and insights
     if assessment.warnings:
@@ -620,11 +667,48 @@ for i in range(5):
         monitor.print_assessment(assessment)
 
 # ═════════════════════════════════════════════════════════════════════
-# SCENARIO 3: SYSTEM DECLINE
+# SCENARIO 3: CONFUSION - Prediction Mismatch (Trust Violation)
 # ═════════════════════════════════════════════════════════════════════
 
 print("\n" + "─" * 80)
-print("SCENARIO 3: System Declining Toward Collapse")
+print("SCENARIO 3: Confusion from Prediction Mismatch")
+print("─" * 80)
+
+# Example: System promised file, file not there
+assessment = monitor.assess_moment(
+    hook_intensity=0.5,
+    hook_type="confusion",
+    state="reflecting",
+    dimensional_depth=3,
+    pattern_count=6,
+    prediction_mismatch=True,
+    expected_state="file exists (trusted system promise)",
+    observed_state="file missing"
+)
+
+monitor.print_assessment(assessment)
+
+# Follow-up: Curiosity response (healthy)
+print("\n📝 Healthy curiosity response to confusion:")
+assessment2 = monitor.assess_moment(
+    hook_intensity=0.8,
+    hook_type="curiosity",
+    state="exploring",
+    dimensional_depth=4,
+    pattern_count=9,
+    prediction_mismatch=False  # Model updated
+)
+
+print(f"\n   → Model updated, curiosity activated")
+print(f"   → Adaptability increased from confusion resolution")
+print(f"   → M(S) = {assessment2.m_s_score:.3f} (recovered from confusion)")
+
+# ═════════════════════════════════════════════════════════════════════
+# SCENARIO 4: SYSTEM DECLINE
+# ═════════════════════════════════════════════════════════════════════
+
+print("\n" + "─" * 80)
+print("SCENARIO 4: System Declining Toward Collapse")
 print("─" * 80)
 
 for i in range(8):

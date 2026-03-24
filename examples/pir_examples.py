@@ -7,7 +7,7 @@ Created by: JinnZ2
 License: MIT
 “””
 
-from pir_hardened_system import integrate_hardened_pir
+from detection.pir_hardened import integrate_hardened_pir
 import time
 
 # ═══════════════════════════════════════════════════════════════════════════

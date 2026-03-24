@@ -5,6 +5,7 @@ import networkx as nx
 from collections import deque
 
 def gini(x: np.ndarray) -> float:
+    """Gini coefficient: G = sum(|x_i - x_j|) / (2 * n^2 * mean(x)). Range [0,1]."""
     x = np.array(x, dtype=float)
     if x.size == 0: return 0.0
     x = x.flatten()
@@ -100,9 +101,17 @@ class CulturalPolarizationSensor:
         return {'H':H_norm, 'Gini':Gini, 'Reciprocity':Reciprocity, 'DB':DB, 'PD':PD, 'CR':1.0}
 
     def compute_indices(self, metrics):
+        """
+        Compute Circulation (C) and Monopolization (M) indices.
+
+        Equations:
+            C = 0.4*H + 0.3*PD + 0.2*(1-R) + 0.1*(1-Gini)   -- higher = more decentralized
+            M = 0.4*Gini + 0.25*DB + 0.2*(1-CR) + 0.15*(1-H) -- higher = more monopolized
+
+        Both clamped to [0, 1] and EMA-smoothed (alpha=0.9).
+        """
         H = metrics['H']; Gini = metrics['Gini']; R = metrics['Reciprocity']; DB = metrics['DB']; PD = metrics['PD']; CR = metrics['CR']
 
-        # simple weightings (tweak to taste)
         C = 0.4 * H + 0.3 * PD + 0.2 * (1-R) + 0.1 * (1-Gini)
         M = 0.4 * Gini + 0.25 * DB + 0.2 * (1-CR) + 0.15 * (1-H)
 

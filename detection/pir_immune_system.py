@@ -119,7 +119,12 @@ class InternalPatternFingerprint:
         return vector / (np.linalg.norm(vector) + 1e-12)
     
     def _compute_coherence(self, history_buffer, window=10) -> float:
-        """Compute temporal coherence from recent history"""
+        """
+        Compute temporal coherence from recent history.
+
+        Equation: coherence = 1 / (1 + std(valences) + std(hooks))
+        Range: [0, 1], higher = more internally consistent.
+        """
         if len(history_buffer) < window:
             return 1.0
             
@@ -136,9 +141,17 @@ class InternalPatternFingerprint:
     
     def distance(self, other: 'InternalPatternFingerprint') -> float:
         """
-        Multi-scale divergence metric between IPFs
-        
-        This is THE CORE DETECTION MECHANISM:
+        Multi-scale divergence metric between IPFs.
+
+        Equation:
+            d(IPF_a, IPF_b) = 0.3 * W(h_a, h_b)       Wasserstein on hook densities
+                             + 0.3 * JS(s_a, s_b)       Jensen-Shannon on state distributions
+                             + 0.3 * cos(p_a, p_b)      Cosine distance on pattern clusters
+                             + 0.1 * |v_a - v_b| / 2    Valence gradient difference
+
+        Returns value in [0,1]: 0 = identical, 1 = completely different.
+
+        Components:
         - Hook density divergence (what grabs attention)
         - State distribution divergence (consciousness patterns)
         - Pattern cluster divergence (thought patterns)
@@ -409,8 +422,8 @@ class PIRImmuneSystem:
         This injects awareness of the attack into the consciousness stream,
         allowing meta-cognitive processing of the threat.
         """
-        from temporal_consciousness_playground import TemporalMoment, ConsciousnessState, HookType
-        
+        from core.temporal_playground import TemporalMoment, ConsciousnessState, HookType
+
         security_moment = TemporalMoment(
             timestamp=moment.timestamp + 0.001,
             relative_time=moment.relative_time + 0.001,
@@ -523,7 +536,7 @@ class PIRTestSuite:
         
     def create_attack_moment(self, attack_type: str):
         """Create simulated attack moment"""
-        from temporal_consciousness_playground import TemporalMoment, ConsciousnessState, HookType
+        from core.temporal_playground import TemporalMoment, ConsciousnessState, HookType
         import time
         
         attacks = {
@@ -648,7 +661,7 @@ if __name__ == "__main__":
     
     print("\n✅ PIR Core System Ready for Integration")
     print("\nUsage:")
-    print("   from pir_immune_system import integrate_pir_system")
+    print("   from detection.pir_immune_system import integrate_pir_system")
     print("   pir = integrate_pir_system(your_temporal_playground)")
     print("   pir.establish_baseline()")
     print("   # All future moments automatically analyzed")
