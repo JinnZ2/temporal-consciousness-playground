@@ -3,7 +3,7 @@
 **A framework for developing authentic moral reasoning through experiential learning**
 
 Created by: JinnZ2 (human-AI collaborative work)  
-License: MIT (belongs to the commons)
+License: CC0-1.0 (belongs to the commons)
 
 ---
 
@@ -326,7 +326,7 @@ We believe this collaborative model - humans and AIs as partners in knowledge cr
 
 ## License
 
-MIT License - Belongs to the commons.
+CC0 1.0 Universal - Belongs to the commons.
 
 Use freely. Modify freely. Share freely. Build upon freely.
 
